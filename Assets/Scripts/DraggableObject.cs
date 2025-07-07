@@ -32,21 +32,6 @@ public class DraggableObject : MonoBehaviour, IPointerDownHandler
         }
     }
 
-    public void SetPhysicsActive(bool active)
-    {
-        physicsActive = active;
-
-        if (rb != null)
-            rb.simulated = active;
-
-        // Optional: enable AI if physics is off
-        if (aiScripts != null)
-        {
-            foreach (var ai in aiScripts)
-                ai.enabled = !active;
-        }
-    }
-
     public void OnPointerDown(PointerEventData eventData)
     {
         if (DragManager.Instance == null)

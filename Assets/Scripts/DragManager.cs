@@ -8,8 +8,6 @@ public class DragManager : MonoBehaviour
     private GameObject draggingObject;
     private Camera mainCamera;
 
-    private Vector3 lastMousePosition;
-    private Vector3 mouseVelocity;
 
     private void Awake()
     {
@@ -30,26 +28,15 @@ public class DragManager : MonoBehaviour
             Vector3 currentMousePos = mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
             currentMousePos.z = 0f;
 
-            // Update velocity
-            mouseVelocity = (currentMousePos - lastMousePosition) / Time.deltaTime;
-
             // Move dragged object to cursor
             draggingObject.transform.position = currentMousePos;
 
             // Drop on mouse button release
             if (Mouse.current.leftButton.wasReleasedThisFrame)
             {
-                DropObjectWithThrow();
+                DropObject();
             }
 
-            lastMousePosition = currentMousePos;
-        }
-        else
-        {
-            // Update lastMousePosition to prevent a huge velocity jump when dragging starts
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-            mousePos.z = 0f;
-            lastMousePosition = mousePos;
         }
     }
 
@@ -74,15 +61,9 @@ public class DragManager : MonoBehaviour
         SetDraggingState(true);
     }
 
-    private void DropObjectWithThrow()
+    private void DropObject()
     {
         if (draggingObject == null) return;
-
-        Rigidbody2D rb = draggingObject.GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            rb.linearVelocity = mouseVelocity;
-        }
 
         SetDraggingState(false);
 
@@ -97,7 +78,6 @@ public class DragManager : MonoBehaviour
         if (draggable != null)
         {
             draggable.SetDragging(isDragging);
-            draggable.SetPhysicsActive(!isDragging);
         }
         else
         {
